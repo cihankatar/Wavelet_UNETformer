@@ -54,7 +54,6 @@ class KVasir_dataset(Dataset):
         image = image.astype(np.float32)
         image = torch.from_numpy(image)
    ''' 
-
    
 def main():
 

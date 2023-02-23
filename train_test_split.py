@@ -19,9 +19,9 @@ create_dir("train/masks")
 create_dir("test/images")
 create_dir("test/masks")
 
-im_path = "/Users/cihankatar/Desktop/Github_Repo/Vision_Transformer/Unet/data/images"
+im_path = "/Users/cihankatar/Desktop/Github_Repo/Wavelet_UNETformer/data/images"
 images_dir_list = sorted(os.listdir(im_path)) 
-mask_path = "/Users/cihankatar/Desktop/Github_Repo/Vision_Transformer/Unet/data/masks"
+mask_path = "/Users/cihankatar/Desktop/Github_Repo/Wavelet_UNETformer/data/masks"
 mask_dir_list = sorted(os.listdir(mask_path))
 data_path=[im_path,mask_path,im_path,mask_path]
 
@@ -38,10 +38,10 @@ masks_test_list=[mask_dir_list[i] for i in test_masks.indices]
 
 all_list =[im_train_list,masks_train_list,im_test_list,masks_test_list]
 
-im_train_path = '/Users/cihankatar/Desktop/Github_Repo/Vision_Transformer/Unet/train/images'
-masks_train_path = '/Users/cihankatar/Desktop/Github_Repo/Vision_Transformer/Unet/train/masks'
-im_test_path = '/Users/cihankatar/Desktop/Github_Repo/Vision_Transformer/Unet/test/images'
-masks_test_path = '/Users/cihankatar/Desktop/Github_Repo/Vision_Transformer/Unet/test/masks'
+im_train_path = '/Users/cihankatar/Desktop/Github_Repo/Wavelet_UNETformer/train/images'
+masks_train_path = '/Users/cihankatar/Desktop/Github_Repo/Wavelet_UNETformer/train/masks'
+im_test_path = '/Users/cihankatar/Desktop/Github_Repo/Wavelet_UNETformer/test/images'
+masks_test_path = '/Users/cihankatar/Desktop/Github_Repo/Wavelet_UNETformer/test/masks'
 
 all_path=[im_train_path,masks_train_path,im_test_path,masks_test_path]
 
