@@ -54,24 +54,38 @@ class KVasir_dataset(Dataset):
         image = image.astype(np.float32)
         image = torch.from_numpy(image)
    ''' 
-   
+
 def main():
 
-    train_im_path = "data/images"
-    images_dir_list = os.listdir(train_im_path) 
-    train_mask_path = "data/masks"
+    train_im_path = "train/images"
+    train_dir_list = os.listdir(train_im_path) 
+    train_mask_path = "train/masks"
     mask_dir_list = os.listdir(train_mask_path) 
-    transformations = transforms.CenterCrop(400)
 
-    data=KVasir_dataset(train_im_path,train_mask_path,images_dir_list,mask_dir_list,transformations)
+    test_im_path = "train/images"
+    test_dir_list = os.listdir(train_im_path) 
+    test_mask_path = "train/masks"
+    test_dir_list = os.listdir(train_mask_path) 
+
+    transformations = transforms.CenterCrop(500)
+
+    data_train = KVasir_dataset(train_im_path,train_mask_path,train_dir_list,mask_dir_list,transformations)
+    data_test  = KVasir_dataset(test_im_path,test_mask_path,test_dir_list,test_dir_list,transformations)
 
     train_loader = DataLoader(
-        dataset=data,
-        batch_size=2,
+        dataset=data_train,
+        batch_size=20,
         shuffle=False,
         num_workers=2 )
 
-    a=data[0]
+    test_loader = DataLoader(
+        dataset=data_test,
+        batch_size=20,
+        shuffle=False,
+        num_workers=2 )
+
+
+    a=data_train[0]
     b=a[0]
 
     image,label = next(iter(train_loader))
@@ -81,7 +95,7 @@ def main():
     im=image[0]
     label=label[0]
 
-    fig = plt.figure()
+    plt.figure()
     plt.subplot(2, 2, 1)
     plt.imshow(b[0].numpy())
     plt.subplot(2,2,2)
@@ -91,6 +105,5 @@ def main():
     plt.show()
 
 if __name__ == '__main__':
-    
     main()
 
