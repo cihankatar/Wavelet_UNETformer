@@ -62,4 +62,5 @@ def split_main():
 
     split(all_list, all_path, data_paths)
     os.chdir(main_path)
-split_main()
+
+#split_main()
