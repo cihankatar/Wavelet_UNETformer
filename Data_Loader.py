@@ -8,6 +8,9 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import matplotlib.pyplot as plt
+import cv2
+
+
 
 class KVasir_dataset(Dataset):
     def __init__(self,train_path,mask_path,image_dir_list,mask_dir_list,transforms=None): #
@@ -27,6 +30,7 @@ class KVasir_dataset(Dataset):
             image_dir = os.path.join(self.train_path,self.image_dir_list[index])
             image=Image.open(image_dir)
             image=np.array(image,dtype=float)
+#            image = image[:, :, [2, 0, 1]]
             image = np.transpose(image, (2, 0, 1))
             image = torch.from_numpy(image)
             image = self.center_crop(image)
@@ -71,7 +75,7 @@ def main():
 
     data_train = KVasir_dataset(train_im_path,train_mask_path,train_dir_list,mask_dir_list,transformations)
     data_test  = KVasir_dataset(test_im_path,test_mask_path,test_dir_list,test_dir_list,transformations)
-
+    
     train_loader = DataLoader(
         dataset=data_train,
         batch_size=20,
@@ -89,19 +93,20 @@ def main():
     b=a[0]
 
     image,label = next(iter(train_loader))
-    print(image.shape)
-    print(label.shape)
     
     im=image[0]
     label=label[0]
+    
+    im=np.array(im,dtype=int)
+    im = np.transpose(im, (2, 1, 0))
 
     plt.figure()
     plt.subplot(2, 2, 1)
-    plt.imshow(b[0].numpy())
+    plt.imshow(b[0])
     plt.subplot(2,2,2)
-    plt.imshow(im[0].numpy())
+    plt.imshow(im[:,:,0])
     plt.subplot(2,2,3)
-    plt.imshow(label[0].numpy())
+    plt.imshow(label[0])
     plt.show()
 
 if __name__ == '__main__':
