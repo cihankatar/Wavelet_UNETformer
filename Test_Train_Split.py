@@ -43,22 +43,22 @@ def dir_list(data_paths):
     all_list         = [im_train_list,masks_train_list,im_test_list,masks_test_list]
     return all_list
 
-def main ():
-    create_dir("train/images") 
-    create_dir("train/masks")
-    create_dir("test/images")
-    create_dir("test/masks")
+def split_main():
 
     main_path   = "/Users/cihankatar/Desktop/Github_Repo/Wavelet_UNETformer"
-    data_paths  = data_path(main_path)
-    all_list    = dir_list(data_paths)
-
+    
     im_train_path    = main_path + "/train/images"
     masks_train_path = main_path + "/train/masks"
     im_test_path     = main_path + "/test/images"
     masks_test_path  = main_path + "/test/masks"
     all_path         = [im_train_path,masks_train_path,im_test_path,masks_test_path]
 
-    split(all_list, all_path, data_paths)
+    for path in all_path:
+        if not os.path.exists(path):
+            create_dir(path)
 
-main()
+    data_paths  = data_path(main_path)
+    all_list    = dir_list(data_paths)
+
+    split(all_list, all_path, data_paths)
+    os.chdir(main_path)
