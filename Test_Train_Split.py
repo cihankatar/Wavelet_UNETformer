@@ -45,7 +45,7 @@ def dir_list(data_paths):
 
 def split_main():
 
-    main_path   = "/Users/cihankatar/Desktop/Github_Repo/Wavelet_UNETformer"
+    main_path   = os.getcwd()
     
     im_train_path    = main_path + "/train/images"
     masks_train_path = main_path + "/train/masks"
@@ -62,3 +62,4 @@ def split_main():
 
     split(all_list, all_path, data_paths)
     os.chdir(main_path)
+split_main()
