@@ -35,7 +35,7 @@ def main():
     image,label = next(iter(train_loader))
 
     im=np.array(image[0],dtype=int)
-    im = np.transpose(image[0], (2, 1, 0))
+    im = np.transpose(im, (2, 1, 0))
     label = np.array(label[0],dtype=int)
     label = np.transpose(label, (2, 1, 0))
 
