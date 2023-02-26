@@ -2,18 +2,54 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from data_loader import loader
+from torch.optim import Adam
+from tqdm import tqdm, trange
+import torch
+import torchvision
+import torchvision.transforms as transforms
+
+def one_hot_encode(target, n_classes):
+    channel,h,w=target.shape
+    label_zero = 0
+    label_one  = 255
+
+    if channel>1 : 
+        target_rgbonehot = torch.zeros((channel,h,w,n_classes))    
+        target_onehot    = torch.zeros((h,w,n_classes))  
+        
+        for idx,target_one_channel in enumerate(target):
+
+            for i in range(h):
+                for j in range (w):
+                    
+                    if target_one_channel[j,i]==label_zero:
+                        target_onehot[j,i] = torch.tensor([1,0])
+                    else:
+                        target_onehot[j,i] = torch.tensor([0,1])
+                    
+            target_rgbonehot[idx,:,:,:]=target_onehot
+
+    return target_rgbonehot 
 
 def main():
-
+    n_classes = 2
     batch_size   = 5
     num_workers  = 2
-    
-    train_loader = loader(batch_size,num_workers,shuffle=True)
-    image,label  = next(iter(train_loader))
+    epochs        = 10
+    l_r = 0.005
 
-    im  = np.array(image[0],dtype=int)
+    train_loader,test_loader = loader(batch_size,num_workers,shuffle=True)
+    images,labels  = next(iter(train_loader))
+    channel,h,w    = labels.shape[1:]
+    target_masks   = torch.zeros(batch_size,channel,h,w,n_classes)
+
+    for idx, label in enumerate(labels):
+        target_mask  = one_hot_encode(label,n_classes)
+        target_masks[idx] = target_mask
+        
+    im  = np.array(images[0],dtype=int)
     im  = np.transpose(im, (2, 1, 0))
-    lab = np.array(label[0],dtype=int)
+    lab = np.array(labels[0],dtype=int)
     lab = np.transpose(lab, (2, 1, 0))
 
     plt.figure()
@@ -21,7 +57,30 @@ def main():
     plt.imshow(im)
     plt.subplot(1, 2, 2)
     plt.imshow(lab)
-    plt.show()
+    
+    plt.imshow(lab)
+
+'''
+    model     = UNET((1, 28, 28),n_heads=2, output_dim=10,mlp_layer_size=8)    
+    optimizer = Adam(model.parameters(), lr=l_r)
+    criterion = Dice_BCE_Loss()
+    
+    for epoch in trange(epochs, desc="Training"):
+        train_loss = 0.0
+
+        for batch in tqdm(loader, desc=f"Epoch {epoch + 1} in training", leave=False):
+            
+            image, masks    = batch
+            predicted_masks  = model(x)
+            loss = criterion(predicted_masks, masks)
+            train_loss += loss.detach().cpu().item() / len(train_loader)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+        print(f"Epoch {epoch + 1}/{epochs} loss: {train_loss}")
+'''
+
 
 if __name__ == "__main__":
    main()

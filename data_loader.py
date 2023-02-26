@@ -20,7 +20,7 @@ def loader(batch_size,num_workers,shuffle):
     test_im_dir_list    = os.listdir(train_mask_path) 
     test_mask_dir_list  = os.listdir(train_im_path) 
 
-    transformations = transforms.CenterCrop(500)
+    transformations = transforms.CenterCrop(300)
 
     data_train = KVasir_dataset(train_im_path,train_mask_path,train_im_dir_list,train_mask_dir_list,transformations)
     data_test  = KVasir_dataset(test_im_path,test_mask_path,test_im_dir_list,test_mask_dir_list,transformations)
@@ -31,7 +31,13 @@ def loader(batch_size,num_workers,shuffle):
         shuffle     = shuffle,
         num_workers = num_workers)
     
-    return train_loader
+    test_loader = DataLoader(
+        dataset     = data_test,
+        batch_size  = batch_size,
+        shuffle     = shuffle,
+        num_workers = num_workers)
+    
+    return train_loader,test_loader
 
     
 #loader()
