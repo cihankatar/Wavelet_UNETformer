@@ -7,13 +7,15 @@ from tqdm import tqdm, trange
 import torch
 import torchvision
 import torchvision.transforms as transforms
+from model import build_unet
 
 def one_hot_encode(target, n_classes):
     channel,h,w=target.shape
     label_zero = 0
     label_one  = 255
 
-    if channel>1 : 
+    if channel>1 :
+
         target_rgbonehot = torch.zeros((channel,h,w,n_classes))    
         target_onehot    = torch.zeros((h,w,n_classes))  
         
@@ -32,21 +34,37 @@ def one_hot_encode(target, n_classes):
     return target_rgbonehot 
 
 def main():
-    n_classes = 2
-    batch_size   = 5
+    n_classes = 1
+    batch_size   = 2
     num_workers  = 2
     epochs        = 10
     l_r = 0.005
 
     train_loader,test_loader = loader(batch_size,num_workers,shuffle=True)
-    images,labels  = next(iter(train_loader))
-    channel,h,w    = labels.shape[1:]
-    target_masks   = torch.zeros(batch_size,channel,h,w,n_classes)
 
-    for idx, label in enumerate(labels):
-        target_mask  = one_hot_encode(label,n_classes)
-        target_masks[idx] = target_mask
-        
+
+    images,labels  = next(iter(train_loader))
+    
+    x = torch.randn((2, 3, 512, 512))
+    
+    model = build_unet()
+    
+    y = model(images)
+
+
+    channel,h,w    = labels.shape[1:]
+
+    if channel>1:
+
+        target_masks_one_hot   = torch.zeros(batch_size,channel,h,w,n_classes)
+
+        for idx, label in enumerate(labels):
+            target_mask  = one_hot_encode(label,n_classes)
+            target_masks_one_hot[idx] = target_mask
+    
+    else:
+        labels=labels/255.0
+
     im  = np.array(images[0],dtype=int)
     im  = np.transpose(im, (2, 1, 0))
     lab = np.array(labels[0],dtype=int)
