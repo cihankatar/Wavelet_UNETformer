@@ -7,7 +7,7 @@ from tqdm import tqdm, trange
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from model import build_unet
+from Model import build_unet
 
 def one_hot_encode(target, n_classes):
     channel,h,w=target.shape
