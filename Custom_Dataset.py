@@ -34,9 +34,9 @@ class KVasir_dataset(Dataset):
         #for idx in range(len(self.image_dir_list)):
             #if 'jpg' in self.image_dir_list:
             mask_dir = os.path.join(self.mask_path,self.mask_dir_list[index])
-            mask=Image.open(mask_dir)
-            mask=np.array(mask,dtype=float)
-            mask = np.transpose(mask, (2, 0, 1))
+            mask = Image.open(mask_dir).convert('L')
+            mask = np.array(mask,dtype=float)
+            #mask = np.transpose(mask, (2, 0, 1))
             mask = torch.from_numpy(mask)
             mask = self.center_crop(mask)
             #if self.transforms is not None:

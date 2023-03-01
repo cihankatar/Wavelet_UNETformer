@@ -10,31 +10,24 @@ import torchvision.transforms as transforms
 from Model import build_unet
 
 def one_hot_encode(target, n_classes):
-    channel,h,w=target.shape
+    h,w=target.shape
     label_zero = 0
     label_one  = 255
 
-    if channel>1 :
+    target_onehot = torch.zeros((h,w,n_classes))    
 
-        target_rgbonehot = torch.zeros((channel,h,w,n_classes))    
-        target_onehot    = torch.zeros((h,w,n_classes))  
-        
-        for idx,target_one_channel in enumerate(target):
+    for i in range(h):
+        for j in range (w):
+            
+            if target[j,i]==label_zero:
+                target_onehot[j,i] = torch.tensor([1,0])
+            else:
+                target_onehot[j,i] = torch.tensor([0,1])
 
-            for i in range(h):
-                for j in range (w):
-                    
-                    if target_one_channel[j,i]==label_zero:
-                        target_onehot[j,i] = torch.tensor([1,0])
-                    else:
-                        target_onehot[j,i] = torch.tensor([0,1])
-                    
-            target_rgbonehot[idx,:,:,:]=target_onehot
-
-    return target_rgbonehot 
+    return target_onehot 
 
 def main():
-    n_classes = 1
+    n_classes = 2
     batch_size   = 2
     num_workers  = 2
     epochs        = 10
@@ -51,19 +44,16 @@ def main():
     
     y = model(images)
 
+    h,w    = labels.shape[1:]
 
-    channel,h,w    = labels.shape[1:]
+    target_masks_one_hot   = torch.zeros(batch_size,h,w,n_classes)
 
-    if channel>1:
+    for idx, label in enumerate(labels):
+        target_mask  = one_hot_encode(label,n_classes)
+        target_masks_one_hot[idx] = target_mask
 
-        target_masks_one_hot   = torch.zeros(batch_size,channel,h,w,n_classes)
 
-        for idx, label in enumerate(labels):
-            target_mask  = one_hot_encode(label,n_classes)
-            target_masks_one_hot[idx] = target_mask
-    
-    else:
-        labels=labels/255.0
+#   labels=labels/255.0
 
     im  = np.array(images[0],dtype=int)
     im  = np.transpose(im, (2, 1, 0))
