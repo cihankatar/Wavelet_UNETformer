@@ -32,17 +32,17 @@ def one_hot_encode(targets, n_classes):
     return target_masks_one_hot 
 
 def main():
-    n_classes = 2
-    batch_size   = 2
-    num_workers  = 2
-    epochs        = 10
-    l_r = 0.005
+    n_classes   = 2
+    batch_size  = 2
+    num_workers = 2
+    epochs      = 10
+    l_r         = 0.005
 
     train_loader,test_loader = loader(batch_size,num_workers,shuffle=True)
     
     model = build_unet()
     optimizer = Adam(model.parameters(), lr=l_r)
-    
+
     for batch in train_loader:
 
         images,labels  = batch        
