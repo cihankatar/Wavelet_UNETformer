@@ -50,4 +50,4 @@ class KVasir_dataset(Dataset):
         image = np.transpose(image, (2, 0, 1))  ## (3, 512, 512)
         image = image.astype(np.float32)
         image = torch.from_numpy(image)
-   ''' 
+''' 

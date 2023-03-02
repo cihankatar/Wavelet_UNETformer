@@ -8,6 +8,12 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 from Model import build_unet
+import torch.nn as nn 
+from Dice_BCE_Loss import DiceBCELoss, DiceLoss
+
+
+def softmax(z):
+    return (torch.exp(z.t()) / torch.sum(torch.exp(z), dim=1)).t()
 
 def one_hot_encode(target, n_classes):
     h,w=target.shape
@@ -40,12 +46,23 @@ def main():
     
     x = torch.randn((2, 3, 512, 512))
     
-    model = build_unet()
+  # model = build_unet()
     
-    y = model(images)
+  # y = model(images)
 
     h,w    = labels.shape[1:]
 
+    im=images[:,0:2,:,:]
+    im=torch.flatten(input=im, start_dim=2, end_dim=3)
+    #im=(im.T/255.)
+    smax_manuel=torch.zeros(2,2,im.shape[2])
+
+    for idx in range(2):
+        smax_manuel[idx] = softmax(im[idx])
+    
+    smax_manuel=smax_manuel.reshape(2,2,512,512)
+    smax_manuel=torch.transpose(smax_manuel,1,3)    
+    
     target_masks_one_hot   = torch.zeros(batch_size,h,w,n_classes)
 
     for idx, label in enumerate(labels):
@@ -58,14 +75,13 @@ def main():
     im  = np.array(images[0],dtype=int)
     im  = np.transpose(im, (2, 1, 0))
     lab = np.array(labels[0],dtype=int)
-    lab = np.transpose(lab, (2, 1, 0))
+    #lab = np.transpose(lab, (2, 1, 0))
 
     plt.figure()
     plt.subplot(1, 2, 1)
     plt.imshow(im)
     plt.subplot(1, 2, 2)
     plt.imshow(lab)
-    
     plt.imshow(lab)
 
 '''
