@@ -41,7 +41,8 @@ def main():
     train_loader,test_loader = loader(batch_size,num_workers,shuffle=True)
     
     model = build_unet()
-
+    optimizer = Adam(model.parameters(), lr=l_r)
+    
     for batch in train_loader:
 
         images,labels  = batch        
@@ -66,7 +67,8 @@ def main():
         plt.subplot(1, 2, 2)
         plt.imshow(label_test)
         plt.imshow(label_test)
-
+        
+        break
 '''
     model     = UNET((1, 28, 28),n_heads=2, output_dim=10,mlp_layer_size=8)    
     optimizer = Adam(model.parameters(), lr=l_r)
