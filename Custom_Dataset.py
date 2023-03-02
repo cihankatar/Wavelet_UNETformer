@@ -22,12 +22,13 @@ class KVasir_dataset(Dataset):
         #for idx in range(len(self.image_dir_list)):
             #if 'jpg' in self.image_dir_list:
             image_dir = os.path.join(self.train_path,self.image_dir_list[index])
-            image=Image.open(image_dir)
-            image=np.array(image,dtype=float)
+            image = Image.open(image_dir)
+            image = np.array(image,dtype=float)
             image = image.astype(np.float32)
             image = np.transpose(image, (2, 0, 1))
             image = torch.from_numpy(image)
             image = self.center_crop(image)
+            #image = image/255.0 
             #if self.transforms is not None:
              #   image = self.transforms(image)
         
@@ -39,6 +40,7 @@ class KVasir_dataset(Dataset):
             #mask = np.transpose(mask, (2, 0, 1))
             mask = torch.from_numpy(mask)
             mask = self.center_crop(mask)
+            mask = mask/255.0 
             #if self.transforms is not None:
             #    mask = self.transforms(mask)
 

@@ -9,28 +9,27 @@ import torchvision
 import torchvision.transforms as transforms
 from Model import build_unet
 import torch.nn as nn 
-from Dice_BCE_Loss import DiceBCELoss, DiceLoss
+from Loss import Dice_CE_Loss
 
 
-def softmax(z):
-    return (torch.exp(z.t()) / torch.sum(torch.exp(z), dim=1)).t()
-
-def one_hot_encode(target, n_classes):
-    h,w=target.shape
+def one_hot_encode(targets, n_classes):
+    batch_size,h,w=targets.shape
     label_zero = 0
-    label_one  = 255
 
     target_onehot = torch.zeros((h,w,n_classes))    
+    target_masks_one_hot   = torch.zeros(batch_size,h,w,n_classes)
 
-    for i in range(h):
-        for j in range (w):
-            
-            if target[j,i]==label_zero:
-                target_onehot[j,i] = torch.tensor([1,0])
-            else:
-                target_onehot[j,i] = torch.tensor([0,1])
+    for idx, label in enumerate(targets):
+        for i in range(h):
+            for j in range (w):
+                if label[j,i]==label_zero:
+                    target_onehot[j,i] = torch.tensor([1,0])
+                else:
+                    target_onehot[j,i] = torch.tensor([0,1])
+        
+        target_masks_one_hot[idx] = target_onehot
 
-    return target_onehot 
+    return target_masks_one_hot 
 
 def main():
     n_classes = 2
@@ -40,49 +39,33 @@ def main():
     l_r = 0.005
 
     train_loader,test_loader = loader(batch_size,num_workers,shuffle=True)
-
-
-    images,labels  = next(iter(train_loader))
     
-    x = torch.randn((2, 3, 512, 512))
-    
-  # model = build_unet()
-    
-  # y = model(images)
+    model = build_unet()
 
-    h,w    = labels.shape[1:]
+    for batch in train_loader:
 
-    im=images[:,0:2,:,:]
-    im=torch.flatten(input=im, start_dim=2, end_dim=3)
-    #im=(im.T/255.)
-    smax_manuel=torch.zeros(2,2,im.shape[2])
+        images,labels  = batch        
+        model_output   = model(images)
+        targets        = one_hot_encode(labels,n_classes)
+        inputs         = torch.transpose(model_output,3,1)
 
-    for idx in range(2):
-        smax_manuel[idx] = softmax(im[idx])
-    
-    smax_manuel=smax_manuel.reshape(2,2,512,512)
-    smax_manuel=torch.transpose(smax_manuel,1,3)    
-    
-    target_masks_one_hot   = torch.zeros(batch_size,h,w,n_classes)
+        loss           = Dice_CE_Loss(inputs,targets)
+        #CE_loss        = loss.CE_loss()
+        #CE_loss_manuel = loss.CE_loss_manuel()
+        #dice_loss      = loss.Dice_Loss()
+        dice_ce_loss   = loss.Dice_CE_loss()
 
-    for idx, label in enumerate(labels):
-        target_mask  = one_hot_encode(label,n_classes)
-        target_masks_one_hot[idx] = target_mask
+        im_test    = np.array(images[0],dtype=int)
+        im_test    = np.transpose(im_test, (2, 1, 0))
+        label_test = np.array(labels[0],dtype=int)
+        label_test = np.transpose(label_test)
 
-
-#   labels=labels/255.0
-
-    im  = np.array(images[0],dtype=int)
-    im  = np.transpose(im, (2, 1, 0))
-    lab = np.array(labels[0],dtype=int)
-    #lab = np.transpose(lab, (2, 1, 0))
-
-    plt.figure()
-    plt.subplot(1, 2, 1)
-    plt.imshow(im)
-    plt.subplot(1, 2, 2)
-    plt.imshow(lab)
-    plt.imshow(lab)
+        plt.figure()
+        plt.subplot(1, 2, 1)
+        plt.imshow(im_test)
+        plt.subplot(1, 2, 2)
+        plt.imshow(label_test)
+        plt.imshow(label_test)
 
 '''
     model     = UNET((1, 28, 28),n_heads=2, output_dim=10,mlp_layer_size=8)    
