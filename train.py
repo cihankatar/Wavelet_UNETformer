@@ -10,26 +10,8 @@ import torchvision.transforms as transforms
 from Model import build_unet
 import torch.nn as nn 
 from Loss import Dice_CE_Loss
+from one_hot_encode import one_hot
 
-
-def one_hot_encode(targets, n_classes):
-    batch_size,h,w=targets.shape
-    label_zero = 0
-
-    target_onehot = torch.zeros((h,w,n_classes))    
-    target_masks_one_hot   = torch.zeros(batch_size,h,w,n_classes)
-
-    for idx, label in enumerate(targets):
-        for i in range(h):
-            for j in range (w):
-                if label[j,i]==label_zero:
-                    target_onehot[j,i] = torch.tensor([1,0])
-                else:
-                    target_onehot[j,i] = torch.tensor([0,1])
-        
-        target_masks_one_hot[idx] = target_onehot
-
-    return target_masks_one_hot 
 
 def main():
     n_classes   = 2
@@ -47,7 +29,7 @@ def main():
 
         images,labels  = batch        
         model_output   = model(images)
-        targets        = one_hot_encode(labels,n_classes)
+        targets        = one_hot(labels,n_classes)
         inputs         = torch.transpose(model_output,3,1)
 
         loss           = Dice_CE_Loss(inputs,targets)
