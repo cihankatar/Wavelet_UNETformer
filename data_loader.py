@@ -23,7 +23,7 @@ def loader(batch_size,num_workers,shuffle):
     transformations = transforms.CenterCrop(512)
 
     data_train = KVasir_dataset(train_im_path,train_mask_path,train_im_dir_list,train_mask_dir_list,transformations)
-    data_test  = KVasir_dataset(test_im_path,test_mask_path,test_im_dir_list,test_mask_dir_list,transformations)
+    data_test  = KVasir_dataset(test_im_path, test_mask_path, test_im_dir_list, test_mask_dir_list, transformations)
 
     train_loader = DataLoader(
         dataset     = data_train,

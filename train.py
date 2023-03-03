@@ -32,11 +32,11 @@ def main():
         targets        = one_hot(labels,n_classes)
         inputs         = torch.transpose(model_output,3,1)
 
-        loss           = Dice_CE_Loss(inputs,targets)
+        loss            = Dice_CE_Loss(inputs,targets)
         #CE_loss        = loss.CE_loss()
         #CE_loss_manuel = loss.CE_loss_manuel()
         #dice_loss      = loss.Dice_Loss()
-        dice_ce_loss   = loss.Dice_CE_loss()
+        dice_ce_loss    = loss.Dice_CE_loss()
 
         im_test    = np.array(images[0],dtype=int)
         im_test    = np.transpose(im_test, (2, 1, 0))
