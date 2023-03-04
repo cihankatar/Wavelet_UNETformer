@@ -19,7 +19,6 @@ class KVasir_dataset(Dataset):
         return len(self.image_dir_list)
     
     def __getitem__(self,index):        
-        #for idx in range(len(self.image_dir_list)):
             #if 'jpg' in self.image_dir_list:
             image_dir = os.path.join(self.train_path,self.image_dir_list[index])
             image = Image.open(image_dir)
@@ -28,11 +27,10 @@ class KVasir_dataset(Dataset):
             image = np.transpose(image, (2, 0, 1))
             image = torch.from_numpy(image)
             image = self.center_crop(image)
-            #image = image/255.0 
+            image = image/255.0 
             #if self.transforms is not None:
              #   image = self.transforms(image)
         
-        #for idx in range(len(self.image_dir_list)):
             #if 'jpg' in self.image_dir_list:
             mask_dir = os.path.join(self.mask_path,self.mask_dir_list[index])
             mask = Image.open(mask_dir).convert('L')
