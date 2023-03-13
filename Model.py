@@ -4,7 +4,7 @@ import torch.nn as nn
 class conv_block(nn.Module):
     def __init__(self, in_c, out_c):
         super().__init__()
-
+        
         self.conv1 = nn.Conv2d(in_c, out_c, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(out_c)
 
@@ -12,6 +12,7 @@ class conv_block(nn.Module):
         self.bn2 = nn.BatchNorm2d(out_c)
 
         self.relu = nn.ReLU()
+       
 
     def forward(self, inputs):
         x = self.conv1(inputs)
@@ -51,8 +52,12 @@ class decoder_block(nn.Module):
         return x
 
 class build_unet(nn.Module):
-    def __init__(self):
+    def __init__(self,n_classes):
         super().__init__()
+        
+        self.n_classes=n_classes
+        sigmoid_f     = nn.Sigmoid()
+        cross_entropy = nn.CrossEntropyLoss(reduction='mean')
 
         """ Encoder """
         self.e1 = encoder_block(3, 64)
@@ -70,7 +75,15 @@ class build_unet(nn.Module):
         self.d4 = decoder_block(128, 64)
 
         """ Classifier """
-        self.outputs = nn.Conv2d(64, 2, kernel_size=1, padding=0)
+        if self.n_classes > 1:
+
+            self.outputs  = nn.Conv2d(64, 2, kernel_size=1, padding=0)
+        
+        else:
+            self.outputs  = nn.Conv2d(64, 1, kernel_size=1, padding=0)
+            #self.outputs  = sigmoid_f(self.outputs)
+
+
 
     def forward(self, inputs):
         """ Encoder """

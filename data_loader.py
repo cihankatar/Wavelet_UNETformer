@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from Custom_Dataset import KVasir_dataset
 from Test_Train_Split import split_main
+from glob import glob
 
 
 def loader(batch_size,num_workers,shuffle):
@@ -15,15 +16,16 @@ def loader(batch_size,num_workers,shuffle):
     if not os.path.exists(train_im_path):
         split_main()
 
-    train_im_dir_list   = os.listdir(train_im_path) 
-    train_mask_dir_list = os.listdir(train_mask_path) 
-    test_im_dir_list    = os.listdir(train_mask_path) 
-    test_mask_dir_list  = os.listdir(train_im_path) 
+    transformations = transforms.Compose([transforms.CenterCrop(512),transforms.Resize(32)])
 
-    transformations = transforms.Compose([transforms.CenterCrop(512),transforms.Resize(64)])
+    train_im_path = sorted(glob("train/images/*"))
+    train_mask_path = sorted(glob("train/masks/*"))
 
-    data_train = KVasir_dataset(train_im_path,train_mask_path,train_im_dir_list,train_mask_dir_list,transformations)
-    data_test  = KVasir_dataset(test_im_path, test_mask_path, test_im_dir_list, test_mask_dir_list, transformations)
+    test_im_path = sorted(glob("test/images/*"))
+    test_mask_path = sorted(glob("test/masks/*"))
+
+    data_train = KVasir_dataset(train_im_path,train_mask_path,transformations)
+    data_test  = KVasir_dataset(test_im_path, test_mask_path, transformations)
 
     train_loader = DataLoader(
         dataset     = data_train,
