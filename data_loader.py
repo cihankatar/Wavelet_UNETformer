@@ -16,7 +16,7 @@ def loader(batch_size,num_workers,shuffle):
     if not os.path.exists(train_im_path):
         split_main()
 
-    transformations = transforms.Compose([transforms.CenterCrop(512),transforms.Resize(32)])
+    transformations = transforms.Compose([transforms.CenterCrop(512),transforms.Resize(128)])
 
     train_im_path = sorted(glob("train/images/*"))
     train_mask_path = sorted(glob("train/masks/*"))

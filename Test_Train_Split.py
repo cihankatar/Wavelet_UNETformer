@@ -32,7 +32,7 @@ def dir_list(data_paths):
     images_dir_list = sorted(os.listdir(data_paths[0])) 
     mask_dir_list   = sorted(os.listdir(data_paths[1]))
 
-    split_ratio     = [int(len(images_dir_list)*0.8),int(len(images_dir_list)*0.2)]
+    split_ratio     = [int(len(images_dir_list)*0.6),int(len(images_dir_list)*0.4)]
     train_idx,test_idx     = random_split(images_dir_list, split_ratio, generator=torch.Generator().manual_seed(42))
     train_masks,test_masks = random_split(mask_dir_list, split_ratio, generator=torch.Generator().manual_seed(42))
 

@@ -13,7 +13,7 @@ class KVasir_dataset(Dataset):
         self.tr    = transforms
 
     def __len__(self):
-        return len(self.train_path)
+         return len(self.train_path)
     
     def __getitem__(self,index):        
 
